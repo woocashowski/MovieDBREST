@@ -1,40 +1,54 @@
-# MovieDBREST
+# MovieDB REST API
 
-A simple REST API for managing a movie database using Flask and SQLAlchemy.
+Prosty serwis REST API zbudowany w FastAPI w ramach laboratorium (Lab 2).  
+Aplikacja umożliwia zarządzanie filmami oraz aktorami z wykorzystaniem bazy SQLite.
 
-## Features
+---
 
-- Get all movies
-- Get a specific movie by ID
-- Create a new movie
-- Update a movie
-- Delete a movie
+## Wymagania
 
-## Installation
+- Python 3.x
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+---
 
-## Usage
+## Instalacja
 
-1. Run the application:
-   ```bash
-   python main.py
-   ```
+```bash
+pip install -r requirements.txt
 
-2. The API will be available at `http://localhost:5000`
+Uruchomienie
+fastapi dev main.py
 
-## API Endpoints
+Aplikacja:
+http://127.0.0.1:8000
 
-- `GET /api/movies` - Get all movies
-- `GET /api/movies/<id>` - Get a specific movie
-- `POST /api/movies` - Create a new movie
-- `PUT /api/movies/<id>` - Update a movie
-- `DELETE /api/movies/<id>` - Delete a movie
 
-## Database
+Swagger UI:
+http://127.0.0.1:8000/docs
 
-The application uses SQLite for data storage. The database file `movies.db` will be created automatically on first run.
+------------------------------------------------
+
+Endpointy:
+
+Filmy
+GET /movies — lista filmów
+GET /movies/{id} — jeden film
+POST /movies — dodanie filmu
+PUT /movies/{id} — aktualizacja filmu
+DELETE /movies/{id} — usunięcie filmu
+DELETE /movies — usunięcie wszystkich filmów
+
+Aktorzy
+GET /actors
+GET /actors/{id}
+POST /actors
+PUT /actors/{id}
+DELETE /actors/{id}
+
+Relacja film → aktorzy
+GET /movies/{movie_id}/actors
+
+Technologie
+- FastAPI
+- SQLite
+- Python

@@ -96,6 +96,18 @@ def delete_all_movies():
 
     return {"message": f"Deleted {deleted} movies"}
 
+# Do testowania:
+# http://127.0.0.1:8000/docs
+# POST /movies
+# Wpisujemy tam:
+# {
+#   "title": "Matrix",
+#   "year": 1999,
+#   "director": "Wachowski",
+#   "description": "Sci-fi"
+# }
+
+
 @app.delete("/movies/{movie_id}")
 def delete_movie(movie_id: int):
     conn = get_connection()
@@ -110,6 +122,8 @@ def delete_movie(movie_id: int):
 
     conn.close()
     return {"message": "Movie deleted"}
+# Test:
+# DELETE /movies/1
 
 @app.put("/movies/{movie_id}")
 def update_movie(movie_id: int, params: dict[str, Any]):
@@ -118,12 +132,13 @@ def update_movie(movie_id: int, params: dict[str, Any]):
 
     cur.execute("""
         UPDATE movies
-        SET title = ?, year = ?, actors = ?
+        SET title = ?, year = ?, director = ?, description = ?
         WHERE id = ?
     """, (
         params.get("title"),
         params.get("year"),
-        params.get("actors"),
+        params.get("director"),
+        params.get("description"),
         movie_id
     ))
 
@@ -135,6 +150,15 @@ def update_movie(movie_id: int, params: dict[str, Any]):
 
     conn.close()
     return {"message": "Movie updated"}
+# Do testowania:
+# http://127.0.0.1:8000/docs
+# PUT /movies/4
+# {
+#   "title": "Matrix Reloaded",
+#   "year": 2003,
+#   "director": "Wachowski",
+#   "description": "Sequel"
+# }
 
 # Punkt 8
 @app.post("/movies")
@@ -157,6 +181,14 @@ def add_movie(params: dict[str, Any]):
     conn.close()
 
     return {"message": "Movie added successfully", "id": movie_id}
+# TEST:
+# POST /movies
+# {
+#   "title": "Matrix",
+#   "year": 1999,
+#   "director": "Wachowski",
+#   "description": "Sci-fi"
+# }
 
 @app.get("/movies")
 def get_movies():
@@ -168,6 +200,9 @@ def get_movies():
     conn.close()
 
     return [dict(row) for row in rows]
+# TEST:
+# Przeglądarka:
+# http://127.0.0.1:8000/movies
 
 @app.get("/actors")
 def get_actors():
@@ -179,6 +214,8 @@ def get_actors():
     conn.close()
 
     return [dict(r) for r in rows]
+# TEST:
+# http://127.0.0.1:8000/actors
 
 @app.get("/actors/{actor_id}")
 def get_actor(actor_id: int):
@@ -193,6 +230,8 @@ def get_actor(actor_id: int):
         raise HTTPException(status_code=404, detail="Actor not found")
 
     return dict(row)
+# TEST:
+# http://127.0.0.1:8000/actors/1
 
 @app.post("/actors")
 def add_actor(params: dict[str, Any]):
@@ -205,6 +244,11 @@ def add_actor(params: dict[str, Any]):
     conn.close()
 
     return {"message": "Actor added", "id": actor_id}
+# TEST:
+# POST /actors
+# {
+#   "name": "Keanu Reeves"
+# }
 
 @app.delete("/actors/{actor_id}")
 def delete_actor(actor_id: int):
@@ -220,6 +264,8 @@ def delete_actor(actor_id: int):
 
     conn.close()
     return {"message": "Actor deleted"}
+# TEST:
+# DELETE /actors/1
 
 @app.put("/actors/{actor_id}")
 def update_actor(actor_id: int, params: dict[str, Any]):
@@ -239,6 +285,11 @@ def update_actor(actor_id: int, params: dict[str, Any]):
 
     conn.close()
     return {"message": "Actor updated"}
+# TEST:
+# PUT /actors/1
+# {
+#   "name": "Keanu Charles Reeves"
+# }
 
 @app.get("/movies/{movie_id}/actors")
 def get_movie_actors(movie_id: int):
@@ -257,3 +308,15 @@ def get_movie_actors(movie_id: int):
 
     return [dict(r) for r in rows]
 
+# TEST:
+# 1 Dodaj film (POST /movies)
+# 2 Dodaj aktora (POST /actors)
+# 3 Powiąż ręcznie w konsoli:
+# import sqlite3
+# conn = sqlite3.connect("movies.db")
+# cur = conn.cursor()
+# cur.execute("INSERT INTO movie_actors VALUES (4,1)")
+# conn.commit()
+# conn.close()
+# 4 Sprawdź:
+# http://127.0.0.1:8000/movies/4/actors
